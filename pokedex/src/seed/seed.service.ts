@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class SeedService {
 
-  baseURL = 'https://pokeapi.co/api/v2/pokemon?limit=10';
+  baseURL = 'https://pokeapi.co/api/v2/pokemon?limit=1000';
 
   constructor(
     private readonly httpService: HttpService,
@@ -20,13 +20,23 @@ export class SeedService {
     async executedSeed() {
     const { data } = await this.httpService.axiosRef.get<PokemonResponse>(this.baseURL);
 
+    //Eliminar todo pero esto no se debe de hacer en la proyecto real
+    await this.pokemonModel.deleteMany({});
+
     const insertPromisesArray = [];
 
-    data.results.forEach( async ({name, url}) => {
+    data.results.forEach(  ({name, url}) => {
         const segments = url.split('/');
         const no : number = +segments[ segments.length - 2 ];
-        this.pokemonModel.create({name, no});
+
+        //const pokemon = await this.pokemonModel.create({name, no});
+
+        insertPromisesArray.push(
+          this.pokemonModel.create({name, no})
+        );
     });
+
+    await Promise.all(insertPromisesArray)
 
     return data.results;
   }
