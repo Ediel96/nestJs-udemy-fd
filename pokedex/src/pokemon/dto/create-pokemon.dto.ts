@@ -1,7 +1,7 @@
 import { IsInt, IsPositive, IsString, Max, Min, MinLength } from "class-validator"
 
 export class CreatePokemonDto {
-    
+
     @IsInt()
     @IsPositive()
     @Min(1)
